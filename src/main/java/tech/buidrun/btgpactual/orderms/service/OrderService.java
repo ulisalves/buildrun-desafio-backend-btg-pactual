@@ -1,6 +1,9 @@
 package tech.buidrun.btgpactual.orderms.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import tech.buidrun.btgpactual.orderms.controller.dto.OrderResponse;
 import tech.buidrun.btgpactual.orderms.entity.OrderEntity;
 import tech.buidrun.btgpactual.orderms.entity.OrderItem;
 import tech.buidrun.btgpactual.orderms.listener.dto.OrderCreatedEvent;
@@ -18,7 +21,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public void save(OrderCreatedEvent event) {
+        public void save(OrderCreatedEvent event) {
 
         var entity = new OrderEntity();
 
@@ -29,6 +32,12 @@ public class OrderService {
 
         orderRepository.save(entity);
 
+    }
+
+    public Page<OrderResponse> findAllByCustomerId(Long customerId, PageRequest pageRequest) {
+        var orders = orderRepository.findAllByCustomerId(customerId, pageRequest);
+
+        return orders.map(OrderResponse::fromEntity);
     }
 
     private BigDecimal getTotal(OrderCreatedEvent event) {
